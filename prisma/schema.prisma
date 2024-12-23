@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  sid      String  @id @unique
+  lid      String  @unique
+  username String?
+  avatar   String?
+
+  score      Int
+  record     Int
+  winRecords Int @map("win_record")
+
+  createAt  DateTime  @default(now()) @map("created_at")
+  updateAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("users")
+}
+
+model MatchRecord {
+  id      Int    @id @default(autoincrement())
+  match   Match  @relation(fields: [matchId], references: [id])
+  matchId String @map("match_id")
+  sid     String
+  lid     String
+
+  score         Int
+  teamnumber    Int
+  kill          Int
+  assist        Int
+  death         Int
+  tower         Int
+  items         String[]
+  normalSkill   String   @map("normal_skill")
+  ultimateSkill String   @map("ultimate_skill")
+  doneDamage    Int      @map("done_damage")
+  takeDamage    Int      @map("take_damage")
+
+  @@map("match_record")
+}
+
+model Match {
+  id     String  @id @unique @map("match_id")
+  time   Int?
+  urd    Boolean
+  winner Int?
+
+  players MatchRecord[]
+
+  createAt  DateTime  @default(now()) @map("created_at")
+  updateAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("matchs")
+}

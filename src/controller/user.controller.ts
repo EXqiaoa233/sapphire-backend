@@ -1,0 +1,37 @@
+
+import { Inject, Controller, Get, Query, Post, Body } from '@midwayjs/core';
+import { Context } from '@midwayjs/koa';
+import { UserService } from '../service/user.service';
+
+export interface IUserReq {
+  sid: string
+  lid: string
+}
+
+@Controller('/user')
+export class APIController {
+  @Inject()
+  ctx: Context;
+
+  @Inject()
+  userService: UserService;
+
+  @Get('/')
+  async getUser(@Query('sid') sid: string) {
+    const user = await this.userService.getUser(sid);
+    return { success: true, message: 'OK', data: user };
+  }
+
+  @Post('/')
+  async gameGetUser(@Body() userReq: IUserReq) {
+    let user = await this.userService.getUser(userReq.sid);
+    if (user == undefined) {
+      user = await this.userService.createUser({
+        sid: userReq.sid,
+        lid: userReq.lid,
+      })
+    }
+
+    return { success: true, message: 'OK', data: user }
+  }
+}
