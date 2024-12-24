@@ -8,6 +8,13 @@ export interface IUserReq {
   lid: string
 }
 
+export interface IUserUpdateOption {
+  sid: string
+  score: number
+  record: number
+  winRecords: number
+}
+
 @Controller('/user')
 export class APIController {
   @Inject()

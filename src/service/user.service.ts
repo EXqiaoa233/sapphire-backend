@@ -1,6 +1,6 @@
 import { Provide } from '@midwayjs/core';
 import { prisma } from '../prisma';
-import { IUserReq } from '../controller/user.controller';
+import { IUserReq, IUserUpdateOption } from '../controller/user.controller';
 
 @Provide()
 export class UserService {
@@ -20,6 +20,19 @@ export class UserService {
         score: 600,
         record: 0,
         winRecords: 0
+      }
+    })
+  }
+
+  async updateUser(user: IUserUpdateOption) {
+    return await prisma.user.update({
+      where: {
+        sid: user.sid
+      },
+      data: {
+        score: user.score,
+        winRecords: user.winRecords,
+        record: user.record
       }
     })
   }
