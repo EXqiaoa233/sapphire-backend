@@ -23,6 +23,7 @@ export class MatchService {
                     lid: v.lid,
                     score: v.score,
                     teamnumber: v.teamnumber,
+                    hero: v.hero,
                     kill: v.kill,
                     assist: v.assist,
                     death: v.death,
