@@ -37,6 +37,7 @@ model MatchRecord {
   sid     String
   lid     String
 
+  hero          String
   score         Int
   teamnumber    Int
   kill          Int

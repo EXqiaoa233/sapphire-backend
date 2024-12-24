@@ -12,6 +12,7 @@ export interface IMatchReq {
         sid: string
         lid: string
 
+        hero:string
         score: number
         teamnumber: number
         kill: number
@@ -34,7 +35,7 @@ export class MatchController {
 
     @Inject()
     matchService: MatchService
-    
+
     @Inject()
     userService: UserService
 
