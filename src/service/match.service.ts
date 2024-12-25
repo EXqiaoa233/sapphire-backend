@@ -24,6 +24,8 @@ export class MatchService {
                     score: v.score,
                     teamnumber: v.teamnumber,
                     hero: v.hero,
+                    lvl: v.lvl,
+                    target: v.target,
                     kill: v.kill,
                     assist: v.assist,
                     death: v.death,

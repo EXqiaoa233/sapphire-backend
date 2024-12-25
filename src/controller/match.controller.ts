@@ -12,7 +12,8 @@ export interface IMatchReq {
         sid: string
         lid: string
 
-        hero:string
+        hero: string
+        lvl: number
         score: number
         teamnumber: number
         kill: number
@@ -24,6 +25,8 @@ export interface IMatchReq {
         ultimateSkill: string
         doneDamage: number
         takeDamage: number
+
+        target: string
     }[]
 }
 

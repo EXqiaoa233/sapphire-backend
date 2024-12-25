@@ -38,6 +38,7 @@ model MatchRecord {
   lid     String
 
   hero          String
+  lvl           Int
   score         Int
   teamnumber    Int
   kill          Int
@@ -49,6 +50,7 @@ model MatchRecord {
   ultimateSkill String   @map("ultimate_skill")
   doneDamage    Int      @map("done_damage")
   takeDamage    Int      @map("take_damage")
+  target        String
 
   @@map("match_record")
 }
