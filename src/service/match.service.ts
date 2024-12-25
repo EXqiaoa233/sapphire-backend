@@ -30,6 +30,7 @@ export class MatchService {
                     assist: v.assist,
                     death: v.death,
                     tower: v.tower,
+                    items: v.items,
                     doneDamage: v.doneDamage,
                     takeDamage: v.takeDamage,
                     normalSkill: v.normalSkill,
