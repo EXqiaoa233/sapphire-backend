@@ -15,6 +15,12 @@ export interface IUserUpdateOption {
   winRecords: number
 }
 
+export interface IUserAvatarAndNameOption {
+  sid: string
+  avatar: string
+  name: string
+}
+
 @Controller('/user')
 export class APIController {
   @Inject()
@@ -24,9 +30,20 @@ export class APIController {
   userService: UserService;
 
   @Get('/')
-  async getUser(@Query('sid') sid: string) {
-    const user = await this.userService.getUser(sid);
-    return { success: true, message: 'OK', data: user };
+  async getUser(@Query('sid') sid?: string, @Query('name') name?: string) {
+    if (sid != undefined) {
+      const user = await this.userService.getUser(sid);
+      if (user != undefined) {
+        return { success: true, message: 'OK', data: user };
+      } else {
+        const user = await this.userService.getUserByName(name)
+        return { success: true, message: 'OK', data: user };
+      }
+    }
+    if (name != undefined) {
+      const user = await this.userService.getUserByName(name)
+      return { success: true, message: 'OK', data: user };
+    }
   }
 
   @Post('/')

@@ -6,4 +6,13 @@ export default {
   koa: {
     port: 7001,
   },
+  bull:{
+    defaultQueueOptions:{
+      redis: {
+        port:6379,
+        host:'lykfw.cc',
+        password:'EXqiaoa233-'
+      }
+    }
+  }
 } as MidwayConfig;

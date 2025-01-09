@@ -1,6 +1,6 @@
 import { Provide } from '@midwayjs/core';
 import { prisma } from '../prisma';
-import { IUserReq, IUserUpdateOption } from '../controller/user.controller';
+import { IUserAvatarAndNameOption, IUserReq, IUserUpdateOption } from '../controller/user.controller';
 
 @Provide()
 export class UserService {
@@ -8,6 +8,16 @@ export class UserService {
     return await prisma.user.findFirst({
       where: {
         sid: sid
+      }
+    })
+  }
+
+  async getUserByName(name:string) {
+    return await prisma.user.findMany({
+      where:{
+        username:{
+          contains:name
+        }
       }
     })
   }
@@ -35,5 +45,21 @@ export class UserService {
         record: user.record
       }
     })
+  }
+
+  async updateUserNameAndAvatar(user: IUserAvatarAndNameOption) {
+    return await prisma.user.update({
+      where:{
+        sid: user.sid
+      },
+      data:{
+        avatar:user.avatar,
+        username:user.name,
+      }
+    })
+  }
+ 
+  async getAllUsers() {
+    return await prisma.user.findMany()
   }
 }
