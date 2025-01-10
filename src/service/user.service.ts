@@ -62,4 +62,14 @@ export class UserService {
   async getAllUsers() {
     return await prisma.user.findMany()
   }
+ 
+  async getRankList() {
+    return await prisma.user.findMany({
+      select:{
+        username:true,
+        score:true,
+        record:true
+      }
+    })
+  }
 }

@@ -58,4 +58,9 @@ export class APIController {
 
     return { success: true, message: 'OK', data: user }
   }
+
+  @Get('/ranklist')
+  async getRankList() {
+    return (await this.userService.getRankList()).sort((a, b) => b.score - a.score)
+  }
 }
