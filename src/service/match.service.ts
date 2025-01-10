@@ -55,5 +55,23 @@ export class MatchService {
         })
     }
 
+    async getMatchRecords(sid: string) {
+        return await prisma.matchRecord.findMany({
+            where: {
+                sid: sid
+            }
+        })
+    }
+
+    async getMatchInfo(matchid: string) {
+        return await prisma.match.findFirst({
+            where: {
+                id: matchid
+            },
+            include: {
+                players: true
+            }
+        })
+    }
 
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post } from "@midwayjs/core";
+import { Body, Controller, Get, Inject, Post, Query } from "@midwayjs/core";
 import { Context } from "vm";
 import { MatchService } from "../service/match.service";
 import { UserService } from "../service/user.service";
@@ -67,4 +67,13 @@ export class MatchController {
         }
     }
 
+    @Get('/record')
+    async getMatchRecord(@Query('sid') sid: string) {
+        return await this.matchService.getMatchRecords(sid)
+    }
+
+    @Get('/info')
+    async getMatchInfo(@Query('matchid') matchid:string ) {
+        return await this.matchService.getMatchInfo(matchid)
+    }
 }
