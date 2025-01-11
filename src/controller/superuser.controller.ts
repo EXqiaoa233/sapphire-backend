@@ -10,7 +10,7 @@ export interface CreateSuperuserReq {
     linksid: string
 }
 
-@Controller('/superuser')
+@Controller('/api/superuser')
 export class SuperuserController {
     @Inject()
     ctx: Context

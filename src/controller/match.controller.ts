@@ -31,7 +31,7 @@ export interface IMatchReq {
 }
 
 
-@Controller('/match')
+@Controller('/api/match')
 export class MatchController {
     @Inject()
     ctx: Context

@@ -21,7 +21,7 @@ export interface IUserAvatarAndNameOption {
   name: string
 }
 
-@Controller('/user')
+@Controller('/api/user')
 export class APIController {
   @Inject()
   ctx: Context;
