@@ -55,6 +55,10 @@ model MatchRecord {
   takeDamage    Int      @map("take_damage")
   target        String
 
+  createAt  DateTime?  @default(now()) @map("created_at")
+  updateAt  DateTime?  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
   @@map("match_record")
 }
 

@@ -69,11 +69,11 @@ export class MatchController {
 
     @Get('/record')
     async getMatchRecord(@Query('sid') sid: string) {
-        return await this.matchService.getMatchRecords(sid)
+        return (await this.matchService.getMatchRecords(sid)).map(v => ({ ...v, ...{ win: v.match.winner == v.teamnumber, time: v.match.time, match: undefined } }))
     }
 
     @Get('/info')
-    async getMatchInfo(@Query('matchid') matchid:string ) {
+    async getMatchInfo(@Query('matchid') matchid: string) {
         return await this.matchService.getMatchInfo(matchid)
     }
 }

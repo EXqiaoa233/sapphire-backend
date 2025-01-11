@@ -59,6 +59,9 @@ export class MatchService {
         return await prisma.matchRecord.findMany({
             where: {
                 sid: sid
+            },
+            include: {
+                match: true
             }
         })
     }
