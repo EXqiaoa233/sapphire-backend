@@ -19,11 +19,13 @@ model User {
   username String?
   avatar   String?
 
+  matchRecords MatchRecord[]
+
   score      Int
   record     Int
   winRecords Int @map("win_record")
 
-  superuser Superuser? @relation(fields: [superuserid], references: [account])
+  superuser   Superuser? @relation(fields: [superuserid], references: [account])
   superuserid String?
 
   createAt  DateTime  @default(now()) @map("created_at")
@@ -38,7 +40,9 @@ model MatchRecord {
   match   Match  @relation(fields: [matchId], references: [id])
   matchId String @map("match_id")
   sid     String
-  lid     String
+  user    User   @relation(fields: [sid], references: [sid])
+
+  lid String
 
   hero          String
   lvl           Int
@@ -55,8 +59,8 @@ model MatchRecord {
   takeDamage    Int      @map("take_damage")
   target        String
 
-  createAt  DateTime?  @default(now()) @map("created_at")
-  updateAt  DateTime?  @updatedAt @map("updated_at")
+  createAt  DateTime? @default(now()) @map("created_at")
+  updateAt  DateTime? @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   @@map("match_record")
@@ -78,12 +82,12 @@ model Match {
 }
 
 model Superuser {
-  id      Int    @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  account String @unique
+  account  String  @unique
   password String
   username String
-  avatar String?
+  avatar   String?
 
   user User[]
 

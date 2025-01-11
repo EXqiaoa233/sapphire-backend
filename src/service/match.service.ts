@@ -72,7 +72,9 @@ export class MatchService {
                 id: matchid
             },
             include: {
-                players: true
+                players: {
+                    include: { user: true }
+                }
             }
         })
     }
