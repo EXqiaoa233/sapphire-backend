@@ -23,6 +23,9 @@ model User {
   record     Int
   winRecords Int @map("win_record")
 
+  superuser Superuser? @relation(fields: [superuserid], references: [account])
+  superuserid String?
+
   createAt  DateTime  @default(now()) @map("created_at")
   updateAt  DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
@@ -68,4 +71,21 @@ model Match {
   deletedAt DateTime? @map("deleted_at")
 
   @@map("matchs")
+}
+
+model Superuser {
+  id      Int    @id @default(autoincrement())
+
+  account String @unique
+  password String
+  username String
+  avatar String?
+
+  user User[]
+
+  createAt  DateTime  @default(now()) @map("created_at")
+  updateAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("superusers")
 }

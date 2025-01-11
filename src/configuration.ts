@@ -7,7 +7,7 @@ import { join } from 'path';
 // import { NotFoundFilter } from './filter/notfound.filter';
 import { ReportMiddleware } from './middleware/report.middleware';
 import * as bull from '@midwayjs/bull';
-
+import * as crossDomain from '@midwayjs/cross-domain';
 
 @Configuration({
   imports: [
@@ -17,7 +17,8 @@ import * as bull from '@midwayjs/bull';
       component: info,
       enabledEnvironment: ['local'],
     },
-    bull
+    bull,
+    crossDomain
   ],
   importConfigs: [join(__dirname, './config')],
 })

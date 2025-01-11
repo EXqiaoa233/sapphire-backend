@@ -12,12 +12,22 @@ export class UserService {
     })
   }
 
-  async getUserByName(name:string) {
+  async getUserByName(name: string) {
+    console.log(name)
     return await prisma.user.findMany({
-      where:{
-        username:{
-          contains:name
-        }
+      where: {
+        OR: [
+          {
+            sid: {
+              contains: name
+            }
+          },
+          {
+            username: {
+              contains: name
+            }
+          }
+        ]
       }
     })
   }
@@ -49,26 +59,37 @@ export class UserService {
 
   async updateUserNameAndAvatar(user: IUserAvatarAndNameOption) {
     return await prisma.user.update({
-      where:{
+      where: {
         sid: user.sid
       },
-      data:{
-        avatar:user.avatar,
-        username:user.name,
+      data: {
+        avatar: user.avatar,
+        username: user.name,
       }
     })
   }
- 
+
   async getAllUsers() {
     return await prisma.user.findMany()
   }
- 
+
   async getRankList() {
     return await prisma.user.findMany({
-      select:{
-        username:true,
-        score:true,
-        record:true
+      select: {
+        username: true,
+        score: true,
+        record: true
+      }
+    })
+  }
+
+  async linkUserToSuperuser(sid: string, superuserAccount: string) {
+    return await prisma.user.update({
+      where: {
+        sid: sid
+      },
+      data: {
+        superuserid: superuserAccount
       }
     })
   }

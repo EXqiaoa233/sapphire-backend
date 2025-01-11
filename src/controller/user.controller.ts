@@ -36,7 +36,7 @@ export class APIController {
       if (user != undefined) {
         return { success: true, message: 'OK', data: user };
       } else {
-        const user = await this.userService.getUserByName(name)
+        const user = await this.userService.getUserByName(sid)
         return { success: true, message: 'OK', data: user };
       }
     }
