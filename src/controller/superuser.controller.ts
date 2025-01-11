@@ -42,7 +42,8 @@ export class SuperuserController {
             return { success: true, message: 'Fail', data: '未知错误' };
         } else {
             await this.userService.linkUserToSuperuser(linksid, superuser.account)
-            return { success: true, message: 'Ok', data: superuser };
+            const data = await this.superuserService.getSuperuser(superuser.account)
+            return { success: true, message: 'Ok', data: data };
         }
     }
 
