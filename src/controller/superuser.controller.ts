@@ -2,6 +2,7 @@ import { Body, Controller, Get, Inject, Post, Query } from "@midwayjs/core";
 import { Context } from "@midwayjs/koa";
 import { SuperuserService } from "../service/superuser.service";
 import { UserService } from "../service/user.service";
+import { createHash, randomBytes } from "crypto";
 
 export interface CreateSuperuserReq {
     account: string
@@ -21,6 +22,13 @@ export class SuperuserController {
     @Inject()
     userService: UserService
 
+    private generateSalt(): string {
+        return randomBytes(16).toString('hex')
+    }
+    private getMd5(password: string, salt: string): string {
+        return createHash('md5').update(password + salt).digest('hex');
+    }
+
     @Post('/')
     async createSuperuser(@Body() superuserReq: CreateSuperuserReq) {
         const { account, password, username, linksid } = superuserReq
@@ -37,13 +45,16 @@ export class SuperuserController {
         }
 
         const avatar = user.avatar
-        const superuser = await this.superuserService.createSuperuser({ account: account, password: password, username: username, avatar: avatar })
+        const salt = this.generateSalt();
+        const hashedPassword = this.getMd5(password, salt);
+
+        const superuser = await this.superuserService.createSuperuser({ account: account, password: hashedPassword, username: username, avatar: avatar, salt: salt })
         if (superuser == undefined) {
             return { success: true, message: 'Fail', data: '未知错误' };
         } else {
             await this.userService.linkUserToSuperuser(linksid, superuser.account)
-            const data = await this.superuserService.getSuperuser(superuser.account)
-            return { success: true, message: 'Ok', data: data };
+            const { password: _, salt: __, ...safeData } = superuser;
+            return { success: true, message: 'Ok', data: safeData };
         }
     }
 
@@ -57,8 +68,20 @@ export class SuperuserController {
     async login(@Body() loginReq: { account: string, password: string }) {
         const superuser = await this.superuserService.getSuperuser(loginReq.account)
         if (superuser) {
-            if (loginReq.password == superuser.password) {
-                return { success: true, message: 'Ok', data: { ...superuser, ...{ password: undefined } } };
+
+            let pwd = superuser.password
+            let salt = superuser.salt
+
+            if (salt == undefined || salt == '') {
+                salt = this.generateSalt();
+                pwd = this.getMd5(superuser.password, salt);
+                await this.superuserService.updateSuperuser({ id: superuser.id, password: pwd, salt: salt })
+            }
+
+            const inputHash = this.getMd5(loginReq.password, salt);
+            if (inputHash == pwd) {
+                const { password, salt, ...safeData } = superuser
+                return { success: true, message: 'Ok', data: safeData };
             } else {
                 return { success: true, message: 'Fail', data: '密码错误' };
             }

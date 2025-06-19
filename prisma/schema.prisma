@@ -85,6 +85,7 @@ model Superuser {
   id Int @id @default(autoincrement())
 
   account  String  @unique
+  salt     String?
   password String
   username String
   avatar   String?
