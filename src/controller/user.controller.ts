@@ -35,10 +35,12 @@ export class APIController {
       const user = await this.userService.getUser(sid);
       if (user != undefined) {
         return { success: true, message: 'OK', data: user };
-      } else {
-        const user = await this.userService.getUserByName(sid)
-        return { success: true, message: 'OK', data: user };
       }
+      return {
+        success: true,
+        message: 'OK',
+        data: await this.userService.getUserByName(sid)
+      };
     }
     if (name != undefined) {
       const user = await this.userService.getUserByName(name)
@@ -61,6 +63,6 @@ export class APIController {
 
   @Get('/ranklist')
   async getRankList() {
-    return (await this.userService.getRankList()).sort((a, b) => b.score - a.score)
+    return await this.userService.getRankList()
   }
 }

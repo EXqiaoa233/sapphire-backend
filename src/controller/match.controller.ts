@@ -30,6 +30,11 @@ export interface IMatchReq {
     }[]
 }
 
+const normalizePagination = (pageInput?: string, pageSizeInput?: string) => {
+    const page = Math.max(1, Number.parseInt(pageInput ?? '1', 10) || 1)
+    const pageSize = Math.min(50, Math.max(5, Number.parseInt(pageSizeInput ?? '10', 10) || 10))
+    return { page, pageSize }
+}
 
 @Controller('/api/match')
 export class MatchController {
@@ -68,8 +73,52 @@ export class MatchController {
     }
 
     @Get('/record')
-    async getMatchRecord(@Query('sid') sid: string) {
-        return (await this.matchService.getMatchRecords(sid)).map(v => ({ ...v, ...{ win: v.match.winner == v.teamnumber, time: v.match.time, match: undefined } }))
+    async getMatchRecord(
+        @Query('sid') sid: string,
+        @Query('page') pageInput?: string,
+        @Query('pageSize') pageSizeInput?: string
+    ) {
+        if (pageInput == undefined && pageSizeInput == undefined) {
+            return (await this.matchService.getMatchRecords(sid)).map(v => ({
+                ...v,
+                win: v.match.winner == v.teamnumber,
+                time: v.match.time,
+                match: undefined
+            }))
+        }
+        const { page, pageSize } = normalizePagination(pageInput, pageSizeInput)
+        const result = await this.matchService.getMatchRecordsPage(sid, page, pageSize)
+        return {
+            items: result.items.map(v => ({
+                ...v,
+                win: v.match.winner == v.teamnumber,
+                time: v.match.time,
+                match: undefined
+            })),
+            page,
+            pageSize,
+            total: result.total
+        }
+    }
+
+    @Get('/all')
+    async getAllMatches(
+        @Query('page') pageInput?: string,
+        @Query('pageSize') pageSizeInput?: string
+    ) {
+        const { page, pageSize } = normalizePagination(pageInput, pageSizeInput)
+        const result = await this.matchService.getAllMatches(page, pageSize)
+        return { ...result, page, pageSize }
+    }
+
+    @Get('/hero-rate')
+    async getHeroRates() {
+        return await this.matchService.getHeroRates()
+    }
+
+    @Get('/skill-rate')
+    async getSkillRates() {
+        return await this.matchService.getSkillRates()
     }
 
     @Get('/info')

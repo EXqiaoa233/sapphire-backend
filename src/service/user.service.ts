@@ -1,6 +1,20 @@
 import { Provide } from '@midwayjs/core';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../prisma';
 import { IUserAvatarAndNameOption, IUserReq, IUserUpdateOption } from '../controller/user.controller';
+
+const publicUserSelect: Prisma.UserSelect = {
+  sid: true,
+  lid: true,
+  username: true,
+  avatar: true,
+  score: true,
+  record: true,
+  winRecords: true,
+  createAt: true,
+  updateAt: true,
+  deletedAt: true,
+};
 
 @Provide()
 export class UserService {
@@ -8,27 +22,35 @@ export class UserService {
     return await prisma.user.findFirst({
       where: {
         sid: sid
-      }
+      },
+      select: publicUserSelect,
     })
   }
 
   async getUserByName(name: string) {
-    console.log(name)
     return await prisma.user.findMany({
       where: {
         OR: [
           {
             sid: {
-              contains: name
+              contains: name,
+              mode: 'insensitive'
             }
           },
           {
             username: {
-              contains: name
+              contains: name,
+              mode: 'insensitive'
             }
           }
         ]
-      }
+      },
+      orderBy: [
+        { record: 'desc' },
+        { score: 'desc' }
+      ],
+      take: 20,
+      select: publicUserSelect,
     })
   }
 
@@ -40,7 +62,8 @@ export class UserService {
         score: 600,
         record: 0,
         winRecords: 0
-      }
+      },
+      select: publicUserSelect,
     })
   }
 
@@ -53,7 +76,8 @@ export class UserService {
         score: user.score,
         winRecords: user.winRecords,
         record: user.record
-      }
+      },
+      select: publicUserSelect,
     })
   }
 
@@ -65,32 +89,37 @@ export class UserService {
       data: {
         avatar: user.avatar,
         username: user.name,
-      }
+      },
+      select: publicUserSelect,
     })
   }
 
   async getAllUsers() {
-    return await prisma.user.findMany()
+    return await prisma.user.findMany({
+      select: publicUserSelect,
+    })
   }
 
   async getRankList() {
     return await prisma.user.findMany({
+      where: {
+        record: {
+          gt: 0
+        }
+      },
+      orderBy: [
+        { score: 'desc' },
+        { winRecords: 'desc' },
+      ],
       select: {
-        username: true,
+        avatar: true,
+        record: true,
         score: true,
-        record: true
-      }
+        sid: true,
+        username: true,
+        winRecords: true,
+      },
     })
   }
 
-  async linkUserToSuperuser(sid: string, superuserAccount: string) {
-    return await prisma.user.update({
-      where: {
-        sid: sid
-      },
-      data: {
-        superuserid: superuserAccount
-      }
-    })
-  }
 }
