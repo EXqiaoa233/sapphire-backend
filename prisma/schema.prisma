@@ -73,12 +73,27 @@ model Match {
   winner Int?
 
   players MatchRecord[]
+  stats   MatchStats?
 
   createAt  DateTime  @default(now()) @map("created_at")
   updateAt  DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   @@map("matchs")
+}
+
+// 局内埋点原始数据（游戏 util/match_stats.lua 上报的 stats 字段），验证后再用于评分
+model MatchStats {
+  id      Int    @id @default(autoincrement())
+  match   Match  @relation(fields: [matchId], references: [id])
+  matchId String @unique @map("match_id")
+  version Int
+  data    Json
+
+  createAt DateTime @default(now()) @map("created_at")
+  updateAt DateTime @updatedAt @map("updated_at")
+
+  @@map("match_stats")
 }
 
 model Superuser {

@@ -28,6 +28,13 @@ export interface IMatchReq {
 
         target: string
     }[]
+    stats?: IMatchStats
+}
+
+// 游戏 util/match_stats.lua 上报的局内埋点，结构见该文件 Export()
+export interface IMatchStats {
+    version: number
+    [key: string]: unknown
 }
 
 const normalizePagination = (pageInput?: string, pageSizeInput?: string) => {
@@ -53,6 +60,15 @@ export class MatchController {
             await this.matchService.createMatch(matchReq)
             return { success: true, message: 'OK' }
         } else {
+            // 埋点只做收集，保存失败不影响天梯结算
+            if (matchReq.stats != undefined) {
+                try {
+                    await this.matchService.saveMatchStats(matchReq.id, matchReq.stats)
+                } catch (err) {
+                    this.ctx.logger.error('[match stats] save failed', matchReq.id, err)
+                }
+            }
+
             const data = await this.matchService.updateMatch(matchReq)
 
             for (let v of data.players) {
@@ -119,6 +135,11 @@ export class MatchController {
     @Get('/skill-rate')
     async getSkillRates() {
         return await this.matchService.getSkillRates()
+    }
+
+    @Get('/stats')
+    async getMatchStats(@Query('matchid') matchid: string) {
+        return await this.matchService.getMatchStats(matchid)
     }
 
     @Get('/info')

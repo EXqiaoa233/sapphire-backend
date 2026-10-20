@@ -1,5 +1,6 @@
 import { Provide } from "@midwayjs/core";
-import { IMatchReq } from "../controller/match.controller";
+import { Prisma } from "@prisma/client";
+import { IMatchReq, IMatchStats } from "../controller/match.controller";
 import { prisma } from "../prisma";
 
 
@@ -52,6 +53,22 @@ export class MatchService {
             include: {
                 players: true
             }
+        })
+    }
+
+    async saveMatchStats(matchId: string, stats: IMatchStats) {
+        const data = stats as unknown as Prisma.InputJsonValue
+        const version = Number(stats.version) || 0
+        return await prisma.matchStats.upsert({
+            where: { matchId },
+            create: { matchId, version, data },
+            update: { version, data },
+        })
+    }
+
+    async getMatchStats(matchId: string) {
+        return await prisma.matchStats.findUnique({
+            where: { matchId }
         })
     }
 
