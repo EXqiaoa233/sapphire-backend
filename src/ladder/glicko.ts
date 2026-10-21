@@ -4,7 +4,8 @@ export const GLICKO = {
     scale: 173.7178,
     initialRd: 350,
     initialVol: 0.06,
-    minRd: 30,
+    minRd: 80,           // 老玩家每局约 ±15，分数不会僵住
+    inactiveRdPerWeek: 15, // 每 7 天没打 RD +15，上限 initialRd
     tau: 0.5,
 }
 

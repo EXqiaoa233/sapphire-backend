@@ -126,6 +126,7 @@ model LadderRating {
   games      Int       @default(0)
   wins       Int       @default(0)
   lastMatch  String?   @map("last_match")
+  lastPlayedAt DateTime? @map("last_played_at")
 
   createAt DateTime @default(now()) @map("created_at")
   updateAt DateTime @updatedAt @map("updated_at")

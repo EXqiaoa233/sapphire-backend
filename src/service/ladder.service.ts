@@ -21,6 +21,7 @@ const defaultRating = (sid: string) => ({
     ratingSup: GLICKO.center,
     games: 0,
     wins: 0,
+    lastPlayedAt: null as Date | null,
 })
 
 @Provide()
@@ -62,6 +63,17 @@ export class LadderService {
         const opponentOf = (team: number): Rating =>
             teamOpponent(scores.filter(s => s.team !== team).map(s => before.get(s.sid)!))
 
+        // 长时间没打：按比赛开始时间计算间隔，每满 7 天 RD 增加，回来后分数变化更快
+        const playedAt = match.createAt
+        before.forEach((r, sid) => {
+            if (r.lastPlayedAt) {
+                const weeks = Math.floor((playedAt.getTime() - r.lastPlayedAt.getTime()) / (7 * 24 * 3600 * 1000))
+                if (weeks > 0) {
+                    before.set(sid, { ...r, rd: Math.min(GLICKO.initialRd, r.rd + GLICKO.inactiveRdPerWeek * weeks) })
+                }
+            }
+        })
+
         const updates = scores.map(s => {
             const old = before.get(s.sid)!
             const win = s.team === match.winner
@@ -81,6 +93,7 @@ export class LadderService {
                 games: old.games + 1,
                 wins: old.wins + (win ? 1 : 0),
                 lastMatch: matchId,
+                lastPlayedAt: playedAt,
             }
             const history = {
                 matchId, sid: s.sid, team: s.team, win, counted: true,
