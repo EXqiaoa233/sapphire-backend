@@ -131,9 +131,12 @@ export class MatchService {
                             hero: true,
                             teamnumber: true,
                             death: true,
-                            assist: true
+                            assist: true,
+                            takeDamage: true,
+                            user: { select: { username: true } }
                         }
-                    }
+                    },
+                    stats: { select: { version: true } }
                 }
             }),
             prisma.match.count({ where })
