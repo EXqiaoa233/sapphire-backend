@@ -2,6 +2,7 @@ import { Body, Controller, Get, Inject, Post, Query } from "@midwayjs/core";
 import { Context } from "vm";
 import { MatchService } from "../service/match.service";
 import { UserService } from "../service/user.service";
+import { LadderService } from "../service/ladder.service";
 
 export interface IMatchReq {
     id: string
@@ -54,6 +55,9 @@ export class MatchController {
     @Inject()
     userService: UserService
 
+    @Inject()
+    ladderService: LadderService
+
     @Post('/')
     async updateMatch(@Body() matchReq: IMatchReq) {
         if (matchReq.winner == undefined) {
@@ -70,6 +74,13 @@ export class MatchController {
             }
 
             const data = await this.matchService.updateMatch(matchReq)
+
+            // 试运行天梯与现有天梯并行，失败只记日志，可用 scripts/ladder.js 补算
+            try {
+                await this.ladderService.processMatch(matchReq.id)
+            } catch (err) {
+                this.ctx.logger.error('[ladder] process failed', matchReq.id, err)
+            }
 
             for (let v of data.players) {
                 let user = await this.userService.getUser(v.sid)

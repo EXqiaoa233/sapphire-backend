@@ -113,3 +113,52 @@ model Superuser {
 
   @@map("superusers")
 }
+
+// 试运行天梯：只用带 match_stats 的比赛计算，与 users.score 互不影响
+model LadderRating {
+  sid        String    @id
+  rating     Float     @default(1000)
+  rd         Float     @default(350)
+  vol        Float     @default(0.06)
+  core       Float     @default(0.5)
+  ratingCore Float     @default(1000) @map("rating_core")
+  ratingSup  Float     @default(1000) @map("rating_sup")
+  games      Int       @default(0)
+  wins       Int       @default(0)
+  lastMatch  String?   @map("last_match")
+
+  createAt DateTime @default(now()) @map("created_at")
+  updateAt DateTime @updatedAt @map("updated_at")
+
+  @@map("ladder_ratings")
+}
+
+// 每局每人一行；counted=false 的行只用来标记已处理（reason 写原因）
+model LadderHistory {
+  id      Int     @id @default(autoincrement())
+  matchId String  @map("match_id")
+  sid     String
+  team    Int
+  win     Boolean
+  counted Boolean
+  reason  String?
+
+  roleT       Float @map("role_t")
+  coreWeight  Float @map("core_weight")
+  killValue   Float @map("kill_value")
+  assistValue Float @map("assist_value")
+  perf        Float
+  baseDelta   Float @map("base_delta")
+  delta       Float
+  ratingBefore Float @map("rating_before")
+  ratingAfter  Float @map("rating_after")
+  rdBefore     Float @map("rd_before")
+  rdAfter      Float @map("rd_after")
+  coreAfter    Float @map("core_after")
+
+  createAt DateTime @default(now()) @map("created_at")
+
+  @@unique([matchId, sid])
+  @@index([sid])
+  @@map("ladder_history")
+}
