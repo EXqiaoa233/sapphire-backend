@@ -5,7 +5,7 @@ import { StatsData, scoreMatch } from '../ladder/scoring';
 
 // 试运行天梯规则
 export const LADDER = {
-    placementGames: 5,
+    placementGames: 3,
     perfWeight: 0.3,       // 表现修正：赢 × (1 + 0.3P)，输 × (1 - 0.3P)
     coreEma: 0.2,          // 核心倾向滑动平均：c ← 0.8c + 0.2w
     minDuration: 600,      // 非投降对局不足 10 分钟不计分
