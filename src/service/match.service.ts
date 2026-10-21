@@ -126,7 +126,12 @@ export class MatchService {
                             createAt: true,
                             doneDamage: true,
                             kill: true,
-                            score: true
+                            score: true,
+                            sid: true,
+                            hero: true,
+                            teamnumber: true,
+                            death: true,
+                            assist: true
                         }
                     }
                 }
